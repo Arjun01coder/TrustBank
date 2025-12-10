@@ -1,0 +1,10 @@
+======== TRUSTBANK PASSBOOK ========
+Account Number: 1001
+Name: Arjun
+-----------------------------------
+Account created successfully.
+Deposited: Rs. 10000.0
+Withdrawn: Rs. 100.0
+-----------------------------------
+Current Balance: Rs. 9900.0
+===================================

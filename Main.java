@@ -11,425 +11,280 @@ public class Main {
     static ArrayList<BankAccount> accounts = new ArrayList<>();
     static int nextAccNumber = 1001;
 
+    // ---------------- UI HELPERS ----------------
+    static void header(String t) {
+        System.out.println("\n===============================================");
+        System.out.println("          " + t);
+        System.out.println("===============================================");
+    }
+
+    static void line() {
+        System.out.println("-----------------------------------------------");
+    }
+
+    // ---------------- MAIN ----------------
     public static void main(String[] args) {
 
-        loadData();  // Load stored data at startup
-
-        printHeader("WELCOME TO TRUSTBANK SYSTEM");
+        loadData();
+        header("WELCOME TO TRUSTBANK");
 
         while (true) {
-            printBox("MAIN MENU");
-            System.out.println("  1. Create New Account");
-            System.out.println("  2. Login to Account");
-            System.out.println("  3. Admin Login");
-            System.out.println("  4. Exit");
-            printLine();
-            System.out.print("Enter choice: ");
+            System.out.println("\n1. Create Account");
+            System.out.println("2. Login");
+            System.out.println("3. Admin Login");
+            System.out.println("4. Exit");
+            System.out.print("Choice: ");
 
-            int choice = sc.nextInt();
+            int ch = sc.nextInt();
 
-            switch (choice) {
-                case 1:
-                    createAccount();
-                    break;
-
-                case 2:
-                    userLogin();
-                    break;
-
-                case 3:
-                    adminLogin();
-                    break;
-
-                case 4:
+            switch (ch) {
+                case 1 -> createAccount();
+                case 2 -> userLogin();
+                case 3 -> adminLogin();
+                case 4 -> {
                     saveData();
-                    printFooter("THANK YOU FOR USING TRUSTBANK");
+                    header("THANK YOU");
                     return;
-
-                default:
-                    printError("Invalid choice! Please try again.");
+                }
+                default -> System.out.println("Invalid choice");
             }
         }
     }
 
-    // --------------------------- STYLISH UI METHODS ---------------------------
-
-    public static void printHeader(String title) {
-        System.out.println("\n===============================================");
-        System.out.println("         " + title);
-        System.out.println("===============================================\n");
-    }
-
-    public static void printFooter(String msg) {
-        System.out.println("\n===============================================");
-        System.out.println("         " + msg);
-        System.out.println("===============================================\n");
-    }
-
-    public static void printBox(String title) {
-        System.out.println("\n+-------------------------------------------+");
-        System.out.println("|               " + title + "               |");
-        System.out.println("+-------------------------------------------+");
-    }
-
-    public static void printLine() {
-        System.out.println("+-------------------------------------------+");
-    }
-
-    public static void printSuccess(String msg) {
-        System.out.println("\n✔ " + msg + "\n");
-    }
-
-    public static void printError(String msg) {
-        System.out.println("\n✖ " + msg + "\n");
-    }
-
-    // --------------------------- CREATE ACCOUNT ---------------------------
-
-    public static void createAccount() {
+    // ---------------- CREATE ACCOUNT ----------------
+    static void createAccount() {
         sc.nextLine();
-        printBox("CREATE NEW ACCOUNT");
-
-        System.out.print("Enter your full name: ");
+        System.out.print("Name: ");
         String name = sc.nextLine();
-
-        System.out.print("Set a 4-digit PIN: ");
+        System.out.print("Set PIN: ");
         int pin = sc.nextInt();
 
         BankAccount acc = new BankAccount(name, nextAccNumber, pin);
         accounts.add(acc);
 
-        printSuccess("Account created successfully!");
-        System.out.println("Your Account Number: " + nextAccNumber);
-
+        System.out.println("Account Created. Account No: " + nextAccNumber);
         nextAccNumber++;
         saveData();
     }
 
-    // --------------------------- USER LOGIN ---------------------------
-
-    public static void userLogin() {
-        printBox("USER LOGIN");
-
-        System.out.print("Enter Account Number: ");
+    // ---------------- USER LOGIN ----------------
+    static void userLogin() {
+        System.out.print("Account No: ");
         int accNo = sc.nextInt();
-
-        System.out.print("Enter PIN: ");
+        System.out.print("PIN: ");
         int pin = sc.nextInt();
 
         for (BankAccount acc : accounts) {
-            if (acc.getAccountNumber() == accNo && acc.validatePin(pin) && acc.isActive()) {
-                printSuccess("Login Successful! Welcome, " + acc.getName());
+            if (acc.getAccountNumber() == accNo &&
+                acc.validatePin(pin) &&
+                acc.isActive()) {
                 userMenu(acc);
                 return;
             }
         }
-
-        printError("Invalid account number or PIN, or account blocked.");
+        System.out.println("Login failed");
     }
 
-    // --------------------------- USER MENU ---------------------------
+    // ---------------- USER MENU ----------------
+    static void userMenu(BankAccount acc) {
 
-    public static void userMenu(BankAccount acc) {
         while (true) {
-
-            printBox("USER DASHBOARD");
+            header("USER DASHBOARD");
             System.out.println("Name: " + acc.getName());
-            System.out.println("Account No: " + acc.getAccountNumber());
             System.out.println("Balance: Rs. " + acc.getBalance());
-            printLine();
+            line();
+            System.out.println("1. Deposit");
+            System.out.println("2. Withdraw");
+            System.out.println("3. Transfer");
+            System.out.println("4. Interest Calculator");
+            System.out.println("5. Loan EMI Calculator");
+            System.out.println("6. Transactions");
+            System.out.println("7. Export Passbook");
+            System.out.println("8. Logout");
+            System.out.print("Choice: ");
 
-            System.out.println("  1. Deposit Money");
-            System.out.println("  2. Withdraw Money");
-            System.out.println("  3. View Balance");
-            System.out.println("  4. View Transactions");
-            System.out.println("  5. Transfer Money");
-            System.out.println("  6. Export Passbook");
-            System.out.println("  7. Logout");
-            printLine();
+            int ch = sc.nextInt();
 
-            System.out.print("Enter choice: ");
-            int choice = sc.nextInt();
-
-            switch (choice) {
-                case 1:
-                    System.out.print("Enter amount to deposit: Rs. ");
+            switch (ch) {
+                case 1 -> {
+                    System.out.print("Amount: ");
                     acc.deposit(sc.nextDouble());
                     saveData();
-                    break;
-
-                case 2:
-                    System.out.print("Enter amount to withdraw: Rs. ");
+                }
+                case 2 -> {
+                    System.out.print("Amount: ");
                     acc.withdraw(sc.nextDouble());
                     saveData();
-                    break;
-
-                case 3:
-                    printBox("ACCOUNT BALANCE");
-                    System.out.println("Current Balance: Rs. " + acc.getBalance());
-                    break;
-
-                case 4:
-                    printBox("TRANSACTION HISTORY");
-                    acc.printTransactions();
-                    break;
-
-                case 5:
-                    transferMoney(acc);
-                    saveData();
-                    break;
-
-                case 6:
-                    exportPassbook(acc);
-                    break;
-
-                case 7:
-                    printSuccess("Logged out successfully.");
-                    return;
-
-                default:
-                    printError("Invalid option. Try again!");
-            }
-        }
-    }
-
-    // --------------------------- MONEY TRANSFER ---------------------------
-
-    public static void transferMoney(BankAccount sender) {
-        printBox("MONEY TRANSFER");
-
-        System.out.print("Enter receiver's account number: ");
-        int receiverAccNo = sc.nextInt();
-
-        BankAccount receiver = null;
-
-        for (BankAccount acc : accounts) {
-            if (acc.getAccountNumber() == receiverAccNo) {
-                receiver = acc;
-                break;
-            }
-        }
-
-        if (receiver == null) {
-            printError("Receiver account not found.");
-            return;
-        }
-
-        System.out.print("Enter amount to transfer: Rs. ");
-        double amount = sc.nextDouble();
-
-        if (amount > sender.getBalance()) {
-            printError("Insufficient balance!");
-            return;
-        }
-
-        sender.withdraw(amount);
-        receiver.deposit(amount);
-
-        printSuccess("Transfer Successful!");
-        System.out.println("Sent Rs. " + amount + " to " + receiver.getName());
-    }
-
-    // --------------------------- EXPORT PASSBOOK ---------------------------
-
-    public static void exportPassbook(BankAccount acc) {
-        try {
-            String filename = "Passbook_" + acc.getAccountNumber() + ".txt";
-            FileWriter writer = new FileWriter(filename);
-
-            writer.write("======== TRUSTBANK PASSBOOK ========\n");
-            writer.write("Account No: " + acc.getAccountNumber() + "\n");
-            writer.write("Name: " + acc.getName() + "\n");
-            writer.write("----------------------------------\n");
-
-            for (String t : acc.getTransactions()) {
-                writer.write(t + "\n");
-            }
-
-            writer.write("----------------------------------\n");
-            writer.write("Current Balance: Rs. " + acc.getBalance() + "\n");
-            writer.write("==================================");
-
-            writer.close();
-
-            printSuccess("Passbook saved as: " + filename);
-
-        } catch (Exception e) {
-            printError("Error exporting passbook.");
-        }
-    }
-
-    // --------------------------- ADMIN LOGIN ---------------------------
-
-    public static void adminLogin() {
-        printBox("ADMIN LOGIN");
-
-        System.out.print("Enter Admin Username: ");
-        String user = sc.next();
-
-        System.out.print("Enter Admin Password: ");
-        String pass = sc.next();
-
-        if (user.equals("admin") && pass.equals("1234")) {
-            printSuccess("Admin login successful!");
-            adminMenu();
-        } else {
-            printError("Incorrect admin credentials.");
-        }
-    }
-
-    // --------------------------- ADMIN MENU ---------------------------
-
-    public static void adminMenu() {
-        while (true) {
-
-            printBox("ADMIN PANEL");
-            System.out.println("  1. View All Accounts");
-            System.out.println("  2. Search Account");
-            System.out.println("  3. Block an Account");
-            System.out.println("  4. View Total Bank Balance");
-            System.out.println("  5. Logout");
-            printLine();
-
-            System.out.print("Enter choice: ");
-            int choice = sc.nextInt();
-
-            switch (choice) {
-
-                case 1:
-                    printBox("ALL ACCOUNTS");
-                    for (BankAccount acc : accounts) {
-                        System.out.println(acc.getAccountNumber() + " - " + acc.getName());
-                    }
-                    break;
-
-                case 2:
-                    System.out.print("Enter Account Number: ");
-                    int accNo = sc.nextInt();
-                    boolean found = false;
-
-                    for (BankAccount acc : accounts) {
-                        if (acc.getAccountNumber() == accNo) {
-                            System.out.println("Account Found: " + acc.getName());
-                            found = true;
-                        }
-                    }
-
-                    if (!found) printError("Account not found.");
-                    break;
-
-                case 3:
-                    System.out.print("Enter Account Number to Block: ");
-                    int blockNo = sc.nextInt();
-                    boolean blocked = false;
-
-                    for (BankAccount acc : accounts) {
-                        if (acc.getAccountNumber() == blockNo) {
-                            acc.blockAccount();
-                            saveData();
-                            blocked = true;
-                            printSuccess("Account Blocked!");
-                        }
-                    }
-
-                    if (!blocked) printError("Account not found.");
-                    break;
-
-                case 4:
-                    double total = 0;
-                    for (BankAccount acc : accounts) total += acc.getBalance();
-
-                    printBox("TOTAL BALANCE IN BANK");
-                    System.out.println("Rs. " + total);
-                    break;
-
-                case 5:
-                    printSuccess("Logged out of admin panel.");
-                    return;
-
-                default:
-                    printError("Invalid option!");
-            }
-        }
-    }
-
-    // --------------------------- FILE STORAGE ---------------------------
-
-    public static void saveData() {
-        try {
-            FileWriter accWriter = new FileWriter(ACC_FILE);
-            for (BankAccount acc : accounts) {
-                accWriter.write(acc.getAccountNumber() + "," +
-                        acc.getName() + "," +
-                        acc.getPin() + "," +
-                        acc.getBalance() + "," +
-                        acc.isActive() + "\n");
-            }
-            accWriter.close();
-
-            FileWriter transWriter = new FileWriter(TRANS_FILE);
-            for (BankAccount acc : accounts) {
-                for (String t : acc.getTransactions()) {
-                    transWriter.write(acc.getAccountNumber() + "," + t + "\n");
                 }
+                case 3 -> transferMoney(acc);
+                case 4 -> interestFeature(acc);
+                case 5 -> emiCalculator();
+                case 6 -> acc.printTransactions();
+                case 7 -> exportPassbook(acc);
+                case 8 -> { return; }
+                default -> System.out.println("Invalid option");
             }
-            transWriter.close();
-
-        } catch (Exception e) {
-            printError("Error saving data.");
         }
     }
 
-    public static void loadData() {
+    // ---------------- TRANSFER ----------------
+    static void transferMoney(BankAccount sender) {
+        System.out.print("Receiver Acc No: ");
+        int rno = sc.nextInt();
+        System.out.print("Amount: ");
+        double amt = sc.nextDouble();
+
+        for (BankAccount r : accounts) {
+            if (r.getAccountNumber() == rno && r.isActive()) {
+                if (amt <= sender.getBalance()) {
+                    sender.withdraw(amt);
+                    r.deposit(amt);
+                    sender.addTransaction("Sent Rs. " + amt + " to " + r.getName());
+                    r.addTransaction("Received Rs. " + amt + " from " + sender.getName());
+                    saveData();
+                }
+                return;
+            }
+        }
+        System.out.println("Transfer failed");
+    }
+
+    // ---------------- INTEREST ----------------
+    static void interestFeature(BankAccount acc) {
+        System.out.print("Rate (%): ");
+        double r = sc.nextDouble();
+        System.out.print("Years: ");
+        int y = sc.nextInt();
+
+        double interest = acc.calculateInterest(r, y);
+        System.out.println("Interest Earned: Rs. " + interest);
+    }
+
+    // ---------------- EMI ----------------
+    static void emiCalculator() {
+        System.out.print("Loan Amount: ");
+        double p = sc.nextDouble();
+        System.out.print("Rate (%): ");
+        double r = sc.nextDouble() / (12 * 100);
+        System.out.print("Months: ");
+        int n = sc.nextInt();
+
+        double emi = (p * r * Math.pow(1 + r, n)) /
+                     (Math.pow(1 + r, n) - 1);
+
+        System.out.println("Monthly EMI: Rs. " + String.format("%.2f", emi));
+    }
+
+    // ---------------- ADMIN ----------------
+    static void adminLogin() {
+        System.out.print("Admin User: ");
+        String u = sc.next();
+        System.out.print("Password: ");
+        String p = sc.next();
+
+        if (u.equals("admin") && p.equals("1234")) adminMenu();
+        else System.out.println("Invalid admin login");
+    }
+
+    static void adminMenu() {
+        while (true) {
+            header("ADMIN PANEL");
+            System.out.println("1. View Accounts");
+            System.out.println("2. Unblock Account");
+            System.out.println("3. Delete Account");
+            System.out.println("4. Total Bank Balance");
+            System.out.println("5. Logout");
+            System.out.print("Choice: ");
+
+            int ch = sc.nextInt();
+
+            switch (ch) {
+                case 1 -> accounts.forEach(a ->
+                        System.out.println(a.getAccountNumber() + " | " + a.getName()));
+                case 2 -> unblockAccount();
+                case 3 -> deleteAccount();
+                case 4 -> {
+                    double sum = 0;
+                    for (BankAccount a : accounts) sum += a.getBalance();
+                    System.out.println("Total Balance: Rs. " + sum);
+                }
+                case 5 -> { return; }
+            }
+        }
+    }
+
+    static void unblockAccount() {
+        System.out.print("Account No: ");
+        int no = sc.nextInt();
+        for (BankAccount a : accounts) {
+            if (a.getAccountNumber() == no) {
+                a.unblockAccount();
+                saveData();
+            }
+        }
+    }
+
+    static void deleteAccount() {
+        System.out.print("Account No: ");
+        int no = sc.nextInt();
+        accounts.removeIf(a -> a.getAccountNumber() == no);
+        saveData();
+    }
+
+    // ---------------- PASSBOOK ----------------
+    static void exportPassbook(BankAccount acc) {
+        try (FileWriter w =
+                     new FileWriter("Passbook_" + acc.getAccountNumber() + ".txt")) {
+
+            w.write("TRUSTBANK PASSBOOK\n");
+            w.write("Account: " + acc.getAccountNumber() + "\n");
+            w.write("Name: " + acc.getName() + "\n\n");
+
+            for (String t : acc.getTransactions())
+                w.write(t + "\n");
+
+            w.write("\nBalance: Rs. " + acc.getBalance());
+        } catch (Exception e) {
+            System.out.println("Error exporting passbook");
+        }
+    }
+
+    // ---------------- FILE STORAGE ----------------
+    static void saveData() {
+        try (FileWriter a = new FileWriter(ACC_FILE);
+             FileWriter t = new FileWriter(TRANS_FILE)) {
+
+            for (BankAccount acc : accounts) {
+                a.write(acc.getAccountNumber() + "," + acc.getName() + "," +
+                        acc.getPin() + "," + acc.getBalance() + "," +
+                        acc.isActive() + "\n");
+
+                for (String tr : acc.getTransactions())
+                    t.write(acc.getAccountNumber() + "," + tr + "\n");
+            }
+        } catch (Exception ignored) {}
+    }
+
+    static void loadData() {
         try {
-            File accFile = new File(ACC_FILE);
-            File transFile = new File(TRANS_FILE);
+            if (!new File(ACC_FILE).exists()) return;
 
-            if (!accFile.exists() || !transFile.exists()) return;
+            BufferedReader ar = new BufferedReader(new FileReader(ACC_FILE));
+            String l;
 
-            BufferedReader accReader = new BufferedReader(new FileReader(accFile));
-
-            String line;
-
-            while ((line = accReader.readLine()) != null) {
-                String[] p = line.split(",");
-
-                int accNo = Integer.parseInt(p[0]);
-                String name = p[1];
-                int pin = Integer.parseInt(p[2]);
-                double bal = Double.parseDouble(p[3]);
-                boolean active = Boolean.parseBoolean(p[4]);
-
-                BankAccount acc = new BankAccount(name, accNo, pin);
-                acc.setBalance(bal);
-                if (!active) acc.blockAccount();
-
+            while ((l = ar.readLine()) != null) {
+                String[] p = l.split(",");
+                BankAccount acc = new BankAccount(p[1],
+                        Integer.parseInt(p[0]),
+                        Integer.parseInt(p[2]));
+                acc.setBalance(Double.parseDouble(p[3]));
+                if (!Boolean.parseBoolean(p[4])) acc.blockAccount();
                 accounts.add(acc);
 
-                if (accNo >= nextAccNumber)
-                    nextAccNumber = accNo + 1;
+                nextAccNumber = Math.max(nextAccNumber,
+                        acc.getAccountNumber() + 1);
             }
-            accReader.close();
-
-            BufferedReader transReader = new BufferedReader(new FileReader(transFile));
-
-            while ((line = transReader.readLine()) != null) {
-                String[] p = line.split(",", 2);
-
-                int accNo = Integer.parseInt(p[0]);
-                String transaction = p[1];
-
-                for (BankAccount acc : accounts) {
-                    if (acc.getAccountNumber() == accNo) {
-                        acc.addTransaction(transaction);
-                    }
-                }
-            }
-
-            transReader.close();
-
-        } catch (Exception e) {
-            printError("Error loading data.");
-        }
+            ar.close();
+        } catch (Exception ignored) {}
     }
 }

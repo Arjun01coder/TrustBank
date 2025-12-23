@@ -78,6 +78,7 @@ public class Main {
             if (acc.getAccountNumber() == accNo &&
                 acc.validatePin(pin) &&
                 acc.isActive()) {
+                System.out.println("\n🙂 Welcome back, " + acc.getName() + "!");
                 userMenu(acc);
                 return;
             }
@@ -99,8 +100,10 @@ public class Main {
             System.out.println("4. Interest Calculator");
             System.out.println("5. Loan EMI Calculator");
             System.out.println("6. Transactions");
-            System.out.println("7. Export Passbook");
-            System.out.println("8. Logout");
+            System.out.println("7. Account Summary");      // NEW
+            System.out.println("8. Export Passbook");
+            System.out.println("9. Logout");
+
             System.out.print("Choice: ");
 
             int ch = sc.nextInt();
@@ -120,8 +123,13 @@ public class Main {
                 case 4 -> interestFeature(acc);
                 case 5 -> emiCalculator();
                 case 6 -> acc.printTransactions();
-                case 7 -> exportPassbook(acc);
-                case 8 -> { return; }
+                case 7 -> accountSummary(acc);     // NEW
+                case 8 -> exportPassbook(acc);
+                case 9 -> {
+                System.out.println("👋 Logged out successfully. Have a great day!");
+                return;
+            }
+
                 default -> System.out.println("Invalid option");
             }
         }
@@ -223,6 +231,15 @@ public class Main {
             }
         }
     }
+    static void accountSummary(BankAccount acc) {
+    header("ACCOUNT SUMMARY");
+    System.out.println("Name        : " + acc.getName());
+    System.out.println("Account No  : " + acc.getAccountNumber());
+    System.out.println("Balance     : Rs. " + acc.getBalance());
+    System.out.println("Status      : " + (acc.isActive() ? "Active" : "Blocked"));
+    line();
+}
+
 
     static void deleteAccount() {
         System.out.print("Account No: ");

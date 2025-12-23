@@ -90,6 +90,18 @@ public class BankAccount {
         return this.pin == pin;
     }
 
+    public void printLastFiveTransactions() {
+        System.out.println("\n--- Last 5 Transactions ---");
+
+        int start = Math.max(0, transactions.size() - 5);
+        for (int i = start; i < transactions.size(); i++) {
+            System.out.println(transactions.get(i));
+    }
+
+            System.out.println("----------------------------");
+    }
+
+
     // ---------------- INTEREST CALCULATION ----------------
     public double calculateInterest(double rate, int years) {
         return (balance * rate * years) / 100;
